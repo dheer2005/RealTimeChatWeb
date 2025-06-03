@@ -13,17 +13,18 @@ export class AuthenticationService {
 
   constructor(private http:HttpClient, private jwtHelper: JwtHelperService, private router: Router, @Inject(PLATFORM_ID) private platformId: any) { }
 
-  // readonly msg$ = this._msg.asObservable();
-
   public chatList = new BehaviorSubject<boolean>(false); 
   public chatList$ = this.chatList.asObservable();
-  // private currentMessages: any[] = [];
   
   
   public UserName:any;
-  seenUrl: any = "https://localhost:7180/api/Seen/messages/" 
-  chatUrl: any = "https://localhost:7180/api/ChatHub/"
-  baseUrl: any = "https://localhost:7180/api/Authentication/"
+  seenUrl: any = "https://chatify.bsite.net/api/Seen/messages/" 
+  chatUrl: any = "https://chatify.bsite.net/api/ChatHub/"
+  baseUrl: any = "https://chatify.bsite.net/api/Authentication/"
+
+  // seenUrl: any = "https://localhost:7180/api/Seen/messages/" 
+  // chatUrl: any = "https://localhost:7180/api/ChatHub/"
+  // baseUrl: any = "https://localhost:7180/api/Authentication/"
   httpOptions:any={
     header: new Headers({
       'content-type': 'application/json'
@@ -42,27 +43,16 @@ export class AuthenticationService {
     return this.http.get<any[]>(`${this.baseUrl}GetAllUsers/${userName}`, this.httpOptions);
   }
 
- 
-
   sendMsg(data:any){
     return this.http.post(this.chatUrl+"SendChatData", data);
   }
 
-
-
-
-  
   markMessagesAsSeen(fromUser: string, toUser: string) {
     return this.http.post(this.seenUrl+"mark-seen", { fromUser, toUser });
   }
 
-  updateMessageStatus(id: number, status: 'sent' | 'delivered' | 'seen') {
-    return this.http.post(this.seenUrl+"update-status", { id, status });
-  }
-
   checkAuthentication(){
     const token = localStorage.getItem('jwt');
-
     if(token && !this.jwtHelper.isTokenExpired(token)){
       return true;
     }else{
@@ -78,7 +68,6 @@ export class AuthenticationService {
   getUserName(){
     if(isPlatformBrowser(this.platformId)){
       const token = localStorage.getItem('jwt');
-
       if(token != null){
         const decodeToken:any = jwtDecode(token);
         this.UserName = decodeToken.UserName;
@@ -95,5 +84,4 @@ export class AuthenticationService {
     }
     return null;
   }
-
 }
